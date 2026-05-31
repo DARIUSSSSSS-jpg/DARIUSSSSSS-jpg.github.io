@@ -2,8 +2,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Motion Control Suite - Professional Camera System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Motion Control Suite - Professional Camera System for Blender">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Motion Control Suite - Professional Camera System</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -12,12 +14,28 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-bg: #1a1a2e;
+            --secondary-bg: #16213e;
+            --accent-color: #6495dc;
+            --danger-color: #f44336;
+            --success-color: #4caf50;
+            --text-primary: #e8eef7;
+            --text-secondary: #a8b8d8;
+            --text-tertiary: #7a8ab8;
+            --border-color: rgba(100, 150, 200, 0.15);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #e8eef7;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            color: var(--text-primary);
             font-family: 'Roboto', 'Helvetica Neue', sans-serif;
             overflow: hidden;
-            height: 100vh;
             font-weight: 300;
             letter-spacing: 0.3px;
         }
@@ -31,7 +49,7 @@
         /* ============ HEADER ============ */
         .header {
             background: linear-gradient(180deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.9) 100%);
-            border-bottom: 1px solid rgba(100, 150, 200, 0.15);
+            border-bottom: 1px solid var(--border-color);
             padding: 16px 24px;
             display: flex;
             justify-content: space-between;
@@ -50,14 +68,15 @@
             font-size: 15px;
             font-weight: 400;
             letter-spacing: 1.2px;
-            color: #a8b8d8;
+            color: var(--text-tertiary);
             text-transform: uppercase;
             cursor: pointer;
             transition: color 0.3s ease;
+            user-select: none;
         }
 
         .system-title:hover {
-            color: #6495dc;
+            color: var(--accent-color);
         }
 
         .camera-selector {
@@ -73,9 +92,11 @@
             backdrop-filter: blur(5px);
         }
 
-        .camera-selector:hover {
+        .camera-selector:hover,
+        .camera-selector:focus {
             background: rgba(40, 60, 90, 0.6);
             border-color: rgba(100, 150, 200, 0.4);
+            outline: none;
         }
 
         .header-right {
@@ -106,7 +127,7 @@
         }
 
         .status-indicator.active {
-            background: #4caf50;
+            background: var(--success-color);
             box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
         }
 
@@ -122,7 +143,7 @@
         .left-panel {
             width: 200px;
             background: linear-gradient(180deg, rgba(30, 40, 65, 0.6) 0%, rgba(25, 35, 55, 0.8) 100%);
-            border-right: 1px solid rgba(100, 150, 200, 0.15);
+            border-right: var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -140,7 +161,7 @@
         .control-label {
             font-size: 10px;
             font-weight: 500;
-            color: #7a8ab8;
+            color: var(--text-tertiary);
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
@@ -187,7 +208,7 @@
             transition: all 0.2s ease;
         }
 
-        .axis-btn:hover {
+        .axis-btn:hover:not(.locked) {
             background: rgba(60, 100, 150, 0.5);
             border-color: rgba(100, 150, 200, 0.4);
         }
@@ -213,9 +234,11 @@
             letter-spacing: 0.5px;
         }
 
-        .settings-btn:hover {
+        .settings-btn:hover,
+        .settings-btn:focus {
             background: rgba(60, 100, 150, 0.4);
             border-color: rgba(100, 150, 200, 0.4);
+            outline: none;
         }
 
         /* ============ CENTER PANEL ============ */
@@ -269,7 +292,7 @@
             background: rgba(0, 0, 0, 0.6);
             padding: 12px 16px;
             border-radius: 2px;
-            border-left: 2px solid #6495dc;
+            border-left: 2px solid var(--accent-color);
             font-size: 11px;
             z-index: 10;
             backdrop-filter: blur(5px);
@@ -288,7 +311,7 @@
         }
 
         .overlay-value {
-            color: #6495dc;
+            color: var(--accent-color);
             font-weight: 500;
             font-family: 'Courier New', monospace;
             letter-spacing: 0.3px;
@@ -312,12 +335,12 @@
         }
 
         .recording-badge.idle {
-            border-left: 2px solid #6495dc;
+            border-left: 2px solid var(--accent-color);
             color: #7a9ab8;
         }
 
         .recording-badge.recording {
-            border-left: 2px solid #f44336;
+            border-left: 2px solid var(--danger-color);
             color: #ff7675;
         }
 
@@ -325,12 +348,12 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #f44336;
+            background: var(--danger-color);
             animation: record-pulse 1s infinite;
         }
 
         .recording-badge.idle .record-dot {
-            background: #6495dc;
+            background: var(--accent-color);
             animation: none;
         }
 
@@ -343,7 +366,7 @@
         .right-panel {
             width: 220px;
             background: linear-gradient(180deg, rgba(30, 40, 65, 0.6) 0%, rgba(25, 35, 55, 0.8) 100%);
-            border-left: 1px solid rgba(100, 150, 200, 0.15);
+            border-left: var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -372,6 +395,11 @@
             border-color: rgba(100, 150, 200, 0.5);
         }
 
+        .action-button:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(100, 150, 220, 0.3);
+        }
+
         .action-button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
@@ -380,7 +408,7 @@
         .action-button.primary {
             background: rgba(100, 150, 220, 0.3);
             border-color: rgba(100, 150, 220, 0.5);
-            color: #6495dc;
+            color: var(--accent-color);
         }
 
         .action-button.record {
@@ -393,13 +421,13 @@
             background: rgba(40, 60, 90, 0.3);
             padding: 12px;
             border-radius: 3px;
-            border: 1px solid rgba(100, 150, 200, 0.15);
+            border: 1px solid var(--border-color);
         }
 
         .section-title {
             font-size: 10px;
             font-weight: 500;
-            color: #7a8ab8;
+            color: var(--text-tertiary);
             margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
@@ -422,7 +450,7 @@
             appearance: none;
             width: 12px;
             height: 12px;
-            background: #6495dc;
+            background: var(--accent-color);
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 0 6px rgba(100, 150, 220, 0.6);
@@ -431,7 +459,7 @@
         .slider-horizontal::-moz-range-thumb {
             width: 12px;
             height: 12px;
-            background: #6495dc;
+            background: var(--accent-color);
             border: none;
             border-radius: 50%;
             cursor: pointer;
@@ -446,7 +474,7 @@
         }
 
         .value-display-current {
-            color: #6495dc;
+            color: var(--accent-color);
             font-weight: 500;
         }
 
@@ -461,22 +489,24 @@
             padding: 8px;
             background: rgba(40, 60, 90, 0.5);
             border: 1px solid rgba(100, 150, 200, 0.25);
-            color: #e8eef7;
+            color: var(--text-primary);
             border-radius: 2px;
             font-size: 12px;
             font-family: 'Roboto', sans-serif;
             font-weight: 300;
+            transition: all 0.2s ease;
         }
 
         .duration-input:focus {
             outline: none;
             border-color: rgba(100, 150, 200, 0.5);
+            box-shadow: 0 0 6px rgba(100, 150, 220, 0.2);
         }
 
         /* ============ BOTTOM TIMELINE ============ */
         .timeline-bar {
             background: linear-gradient(180deg, rgba(30, 40, 65, 0.7) 0%, rgba(25, 35, 55, 0.9) 100%);
-            border-top: 1px solid rgba(100, 150, 200, 0.15);
+            border-top: 1px solid var(--border-color);
             padding: 12px 16px;
             display: flex;
             align-items: center;
@@ -501,15 +531,18 @@
             transition: all 0.2s ease;
         }
 
-        .timeline-btn:hover {
+        .timeline-btn:hover,
+        .timeline-btn:focus {
             background: rgba(60, 100, 150, 0.5);
             border-color: rgba(100, 150, 200, 0.4);
+            outline: none;
         }
 
         .frame-label {
             font-size: 10px;
             color: #5a7a9a;
             min-width: 40px;
+            user-select: none;
         }
 
         .timeline-scrubber {
@@ -530,7 +563,7 @@
 
         .timeline-progress {
             height: 100%;
-            background: #6495dc;
+            background: var(--accent-color);
             border-radius: 2px;
             transition: width 0.1s linear;
         }
@@ -541,6 +574,7 @@
             font-size: 9px;
             color: #3a5a7a;
             padding: 0 4px;
+            user-select: none;
         }
 
         .frame-info {
@@ -549,6 +583,7 @@
             font-size: 11px;
             color: #7a9ab8;
             align-items: center;
+            user-select: none;
         }
 
         .frame-info-label {
@@ -556,7 +591,7 @@
         }
 
         .frame-info-value {
-            color: #6495dc;
+            color: var(--accent-color);
             font-weight: 500;
             font-family: 'Courier New', monospace;
         }
@@ -578,6 +613,12 @@
 
         .modal.active {
             display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
@@ -596,7 +637,7 @@
             font-size: 14px;
             font-weight: 400;
             margin-bottom: 20px;
-            color: #a8b8d8;
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
@@ -610,7 +651,7 @@
 
         .input-group label {
             font-size: 11px;
-            color: #7a8ab8;
+            color: var(--text-tertiary);
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -620,7 +661,7 @@
         .input-group select {
             background: rgba(40, 60, 90, 0.5);
             border: 1px solid rgba(100, 150, 200, 0.25);
-            color: #e8eef7;
+            color: var(--text-primary);
             padding: 10px 12px;
             border-radius: 2px;
             font-size: 12px;
@@ -634,6 +675,7 @@
             outline: none;
             border-color: rgba(100, 150, 200, 0.5);
             background: rgba(40, 60, 90, 0.7);
+            box-shadow: 0 0 8px rgba(100, 150, 220, 0.2);
         }
 
         .modal-buttons {
@@ -660,7 +702,7 @@
         .modal-buttons button:first-child {
             background: rgba(100, 150, 220, 0.3);
             border-color: rgba(100, 150, 220, 0.5);
-            color: #6495dc;
+            color: var(--accent-color);
         }
 
         .modal-buttons button:hover {
@@ -670,6 +712,11 @@
 
         .modal-buttons button:first-child:hover {
             background: rgba(100, 150, 220, 0.5);
+        }
+
+        .modal-buttons button:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(100, 150, 220, 0.3);
         }
 
         /* ============ SCROLLBAR ============ */
@@ -690,6 +737,44 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(100, 150, 200, 0.6);
         }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .left-panel, .right-panel {
+                width: 150px;
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .timeline-bar {
+                flex-direction: column;
+                height: auto;
+            }
+        }
+
+        /* ============ ACCESSIBILITY ============ */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus visible para navegación por teclado */
+        *:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -697,16 +782,16 @@
         <!-- HEADER -->
         <div class="header">
             <div class="header-left">
-                <div class="system-title" onclick="openSettingsModal()">Motion Control Suite</div>
+                <h1 class="system-title" onclick="openSettingsModal()" role="button" tabindex="0">Motion Control Suite</h1>
             </div>
             <div class="header-right">
-                <select class="camera-selector" id="cameraSelect">
+                <select class="camera-selector" id="cameraSelect" aria-label="Select camera">
                     <option value="camera1">Camera 1</option>
                     <option value="camera2">Camera 2</option>
                     <option value="camera3">Camera 3</option>
                 </select>
-                <div class="connection-status">
-                    <div class="status-indicator" id="statusIndicator"></div>
+                <div class="connection-status" role="status" aria-live="polite">
+                    <div class="status-indicator" id="statusIndicator" aria-hidden="true"></div>
                     <span id="statusText">DISCONNECTED</span>
                 </div>
             </div>
@@ -719,25 +804,25 @@
                 <div class="control-group">
                     <div class="control-label">Axis Lock</div>
                     <div class="axis-buttons">
-                        <button class="axis-btn" id="lockX" onclick="toggleAxisLock('X')">X</button>
-                        <button class="axis-btn" id="lockY" onclick="toggleAxisLock('Y')">Y</button>
-                        <button class="axis-btn" id="lockZ" onclick="toggleAxisLock('Z')">Z</button>
+                        <button class="axis-btn" id="lockX" onclick="toggleAxisLock('X')" aria-pressed="false">X</button>
+                        <button class="axis-btn" id="lockY" onclick="toggleAxisLock('Y')" aria-pressed="false">Y</button>
+                        <button class="axis-btn" id="lockZ" onclick="toggleAxisLock('Z')" aria-pressed="false">Z</button>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <div class="control-label">Position Scale</div>
+                    <label for="posScaleSlider" class="control-label">Position Scale</label>
                     <div class="slider-container">
-                        <input type="range" class="slider-vertical" id="posScaleSlider" min="0" max="100" value="50">
-                        <div class="slider-value" id="posScaleValue">50</div>
+                        <input type="range" class="slider-vertical" id="posScaleSlider" min="0" max="100" value="50" aria-label="Position scale slider">
+                        <div class="slider-value" id="posScaleValue" aria-live="polite">50</div>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <div class="control-label">Smoothing</div>
+                    <label for="smoothSlider" class="control-label">Smoothing</label>
                     <div class="slider-container">
-                        <input type="range" class="slider-vertical" id="smoothSlider" min="0" max="100" value="70">
-                        <div class="slider-value" id="smoothValue">70</div>
+                        <input type="range" class="slider-vertical" id="smoothSlider" min="0" max="100" value="70" aria-label="Smoothing slider">
+                        <div class="slider-value" id="smoothValue" aria-live="polite">70</div>
                     </div>
                 </div>
 
@@ -753,7 +838,7 @@
                         <div class="no-preview">Camera Preview</div>
                     </div>
 
-                    <div class="camera-overlay">
+                    <div class="camera-overlay" role="region" aria-label="Camera overlay information">
                         <div class="overlay-row">
                             <span class="overlay-label">Rotation</span>
                             <span class="overlay-value" id="overlayRotation">0.00 / 0.00 / 0.00</span>
@@ -768,7 +853,7 @@
                         </div>
                     </div>
 
-                    <div class="recording-badge idle" id="recordingBadge">
+                    <div class="recording-badge idle" id="recordingBadge" role="status" aria-live="polite">
                         <div class="record-dot"></div>
                         <span id="recordingStatus">Standby</span>
                     </div>
@@ -783,7 +868,7 @@
 
                 <div class="control-section">
                     <div class="section-title">Zoom Control</div>
-                    <input type="range" class="slider-horizontal" id="zoomSlider" min="1" max="200" value="50">
+                    <input type="range" class="slider-horizontal" id="zoomSlider" min="1" max="200" value="50" aria-label="Zoom slider">
                     <div class="value-display">
                         <span class="value-display-current" id="zoomValue">50.0</span>
                         <span>200.0</span>
@@ -792,7 +877,7 @@
 
                 <div class="control-section">
                     <div class="section-title">Recording Range</div>
-                    <input type="range" class="slider-horizontal" id="recordRangeSlider" min="0" max="100" value="50">
+                    <input type="range" class="slider-horizontal" id="recordRangeSlider" min="0" max="100" value="50" aria-label="Recording range slider">
                     <div class="value-display">
                         <span class="value-display-current" id="recordRangeValue">0.00</span>
                         <span id="recordRangeMax">100.00</span>
@@ -802,7 +887,7 @@
                 <div class="control-section">
                     <div class="section-title">Animation Duration</div>
                     <div class="duration-input-container">
-                        <input type="number" id="durationInput" class="duration-input" min="1" max="99999" value="100">
+                        <input type="number" id="durationInput" class="duration-input" min="1" max="99999" value="100" aria-label="Animation duration in frames">
                         <span style="color: #5a7a9a; font-size: 10px; white-space: nowrap;">Frames</span>
                     </div>
                     <div class="value-display" style="margin-top: 6px;">
@@ -816,15 +901,15 @@
         <!-- BOTTOM TIMELINE -->
         <div class="timeline-bar">
             <div class="timeline-nav-buttons">
-                <button class="timeline-btn" onclick="firstFrame()">First</button>
-                <button class="timeline-btn" onclick="prevFrame()">Prev</button>
+                <button class="timeline-btn" onclick="firstFrame()" aria-label="Go to first frame">First</button>
+                <button class="timeline-btn" onclick="prevFrame()" aria-label="Go to previous frame">Prev</button>
                 <span class="frame-label">Frame</span>
-                <button class="timeline-btn" onclick="nextFrame()">Next</button>
-                <button class="timeline-btn" onclick="lastFrame()">Last</button>
+                <button class="timeline-btn" onclick="nextFrame()" aria-label="Go to next frame">Next</button>
+                <button class="timeline-btn" onclick="lastFrame()" aria-label="Go to last frame">Last</button>
             </div>
 
             <div class="timeline-scrubber">
-                <div class="timeline-track" id="timelineTrack">
+                <div class="timeline-track" id="timelineTrack" role="slider" aria-label="Timeline scrubber" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
                     <div class="timeline-progress" id="timelineProgress" style="width: 0%;"></div>
                 </div>
                 <div class="timeline-labels">
@@ -843,36 +928,36 @@
     </div>
 
     <!-- SETTINGS MODAL -->
-    <div class="modal" id="settingsModal">
+    <div class="modal" id="settingsModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
         <div class="modal-content">
-            <div class="modal-title">System Configuration</div>
+            <div class="modal-title" id="modalTitle">System Configuration</div>
 
             <div class="input-group">
-                <label>Blender Server IP</label>
-                <input type="text" id="blenderIP" value="192.168.1.100" placeholder="192.168.1.100">
+                <label for="blenderIP">Blender Server IP</label>
+                <input type="text" id="blenderIP" value="192.168.1.100" placeholder="192.168.1.100" aria-label="Blender server IP address">
             </div>
 
             <div class="input-group">
-                <label>Server Port</label>
-                <input type="number" id="blenderPort" value="5005" min="1000" max="65535">
+                <label for="blenderPort">Server Port</label>
+                <input type="number" id="blenderPort" value="5005" min="1000" max="65535" aria-label="Server port number">
             </div>
 
             <div class="input-group">
-                <label>Connection Protocol</label>
-                <select id="protocolSelect">
+                <label for="protocolSelect">Connection Protocol</label>
+                <select id="protocolSelect" aria-label="Connection protocol selection">
                     <option value="ws">WebSocket</option>
                     <option value="http">HTTP</option>
                 </select>
             </div>
 
             <div class="input-group">
-                <label>Camera Identifier</label>
-                <input type="text" id="cameraName" value="camera1" placeholder="camera1">
+                <label for="cameraName">Camera Identifier</label>
+                <input type="text" id="cameraName" value="camera1" placeholder="camera1" aria-label="Camera identifier">
             </div>
 
             <div class="input-group">
-                <label>Frame Rate</label>
-                <input type="number" id="frameRate" value="24" min="1" max="240">
+                <label for="frameRate">Frame Rate</label>
+                <input type="number" id="frameRate" value="24" min="1" max="240" aria-label="Frame rate in FPS">
             </div>
 
             <div class="modal-buttons">
@@ -883,6 +968,7 @@
     </div>
 
     <script>
+        // ============ ESTADO GLOBAL ============
         let ws = null;
         let isConnected = false;
         let isRecording = false;
@@ -897,26 +983,34 @@
 
         // ============ LOAD SETTINGS ============
         function loadSettings() {
-            const saved = localStorage.getItem('motionControlSettings');
-            if (saved) {
-                const settings = JSON.parse(saved);
-                document.getElementById('blenderIP').value = settings.ip || '192.168.1.100';
-                document.getElementById('blenderPort').value = settings.port || '5005';
-                document.getElementById('protocolSelect').value = settings.protocol || 'ws';
-                document.getElementById('cameraName').value = settings.cameraName || 'camera1';
-                document.getElementById('frameRate').value = settings.frameRate || '24';
+            try {
+                const saved = localStorage.getItem('motionControlSettings');
+                if (saved) {
+                    const settings = JSON.parse(saved);
+                    document.getElementById('blenderIP').value = settings.ip || '192.168.1.100';
+                    document.getElementById('blenderPort').value = settings.port || '5005';
+                    document.getElementById('protocolSelect').value = settings.protocol || 'ws';
+                    document.getElementById('cameraName').value = settings.cameraName || 'camera1';
+                    document.getElementById('frameRate').value = settings.frameRate || '24';
+                }
+            } catch (e) {
+                console.error('Error cargando configuración:', e);
             }
         }
 
         function saveSettings() {
-            const settings = {
-                ip: document.getElementById('blenderIP').value,
-                port: document.getElementById('blenderPort').value,
-                protocol: document.getElementById('protocolSelect').value,
-                cameraName: document.getElementById('cameraName').value,
-                frameRate: document.getElementById('frameRate').value
-            };
-            localStorage.setItem('motionControlSettings', JSON.stringify(settings));
+            try {
+                const settings = {
+                    ip: document.getElementById('blenderIP').value,
+                    port: document.getElementById('blenderPort').value,
+                    protocol: document.getElementById('protocolSelect').value,
+                    cameraName: document.getElementById('cameraName').value,
+                    frameRate: document.getElementById('frameRate').value
+                };
+                localStorage.setItem('motionControlSettings', JSON.stringify(settings));
+            } catch (e) {
+                console.error('Error guardando configuración:', e);
+            }
         }
 
         function saveSettingsAndConnect() {
@@ -926,12 +1020,21 @@
 
         // ============ MODAL CONTROL ============
         function openSettingsModal() {
-            document.getElementById('settingsModal').classList.add('active');
+            const modal = document.getElementById('settingsModal');
+            modal.classList.add('active');
+            modal.querySelector('input:first-of-type').focus();
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal('settingsModal');
+            }
+        });
 
         // ============ CONNECTION ============
         async function connect() {
@@ -940,13 +1043,13 @@
             const protocol = document.getElementById('protocolSelect').value;
 
             if (!ip || !port) {
-                alert('Please enter IP and Port');
+                alert('Por favor ingresa IP y Puerto');
                 return;
             }
 
             const hasPermissions = await requestPermissions();
             if (!hasPermissions) {
-                alert('Device orientation permissions required');
+                alert('Se requieren permisos de orientación del dispositivo');
                 return;
             }
 
@@ -967,21 +1070,22 @@
                     updateConnectionStatus(true);
                     closeModal('settingsModal');
                     startListeners();
-                    console.log('Connected to Blender');
+                    console.log('✓ Conectado a Blender');
                 };
 
-                ws.onerror = () => {
-                    console.error('WebSocket error');
+                ws.onerror = (error) => {
+                    console.error('Error WebSocket:', error);
                     updateConnectionStatus(false);
                 };
 
                 ws.onclose = () => {
                     isConnected = false;
                     updateConnectionStatus(false);
-                    console.log('Disconnected from Blender');
+                    console.log('✗ Desconectado de Blender');
                 };
             } catch (error) {
-                alert('Connection failed: ' + error.message);
+                alert('Conexión fallida: ' + error.message);
+                updateConnectionStatus(false);
             }
         }
 
@@ -990,13 +1094,17 @@
             updateConnectionStatus(true);
             closeModal('settingsModal');
             startListeners();
-            console.log('HTTP connection established');
+            console.log('✓ Conexión HTTP establecida');
         }
 
         function disconnect() {
-            if (ws) ws.close();
+            if (ws) {
+                ws.close();
+                ws = null;
+            }
             isConnected = false;
             isSendingMotion = false;
+            isRecording = false;
             updateConnectionStatus(false);
             window.removeEventListener('deviceorientation', handleOrientation);
             window.removeEventListener('devicemotion', handleMotion);
@@ -1015,12 +1123,14 @@
                 startBtn.disabled = false;
                 playBtn.disabled = false;
                 recordBtn.disabled = false;
+                startBtn.style.opacity = '1';
             } else {
                 indicator.classList.remove('active');
                 text.textContent = 'DISCONNECTED';
                 startBtn.disabled = true;
                 playBtn.disabled = true;
                 recordBtn.disabled = true;
+                startBtn.style.opacity = '1';
             }
         }
 
@@ -1031,6 +1141,7 @@
                     const perm = await DeviceOrientationEvent.requestPermission();
                     return perm === 'granted';
                 } catch (e) {
+                    console.warn('Permisos de orientación rechazados:', e);
                     return false;
                 }
             }
@@ -1039,8 +1150,8 @@
 
         // ============ MOTION LISTENERS ============
         function startListeners() {
-            window.addEventListener('deviceorientation', handleOrientation);
-            window.addEventListener('devicemotion', handleMotion);
+            window.addEventListener('deviceorientation', handleOrientation, false);
+            window.addEventListener('devicemotion', handleMotion, false);
         }
 
         function handleOrientation(event) {
@@ -1086,7 +1197,8 @@
                 zoom: zoom,
                 fov: fov,
                 isRecording: isRecording,
-                frame: currentFrame
+                frame: currentFrame,
+                axisLocked: axisLocked
             };
 
             if (ws && ws.readyState === WebSocket.OPEN) {
@@ -1107,8 +1219,8 @@
         // ============ MOTION CONTROLS ============
         function startSendingMotion() {
             if (!isConnected) return;
-            isSendingMotion = true;
-            document.getElementById('startMotionBtn').style.opacity = '0.5';
+            isSendingMotion = !isSendingMotion;
+            document.getElementById('startMotionBtn').style.opacity = isSendingMotion ? '1' : '0.5';
         }
 
         function toggleRecording() {
@@ -1119,21 +1231,25 @@
 
             if (isRecording) {
                 badge.classList.remove('idle');
+                badge.classList.add('recording');
                 status.textContent = 'RECORDING';
             } else {
                 badge.classList.add('idle');
+                badge.classList.remove('recording');
                 status.textContent = 'Standby';
             }
         }
 
         function playAnimation() {
             if (!isConnected) return;
-            console.log('Playing animation');
+            console.log('Reproduciendo animación');
         }
 
         function toggleAxisLock(axis) {
             axisLocked[axis] = !axisLocked[axis];
-            document.getElementById('lock' + axis).classList.toggle('locked');
+            const btn = document.getElementById('lock' + axis);
+            btn.classList.toggle('locked');
+            btn.setAttribute('aria-pressed', axisLocked[axis]);
         }
 
         // ============ SLIDER UPDATES ============
@@ -1156,6 +1272,7 @@
             document.getElementById('timelineEnd').textContent = maxFrames;
             document.getElementById('totalFramesLabel').textContent = maxFrames;
             document.getElementById('recordRangeMax').textContent = maxFrames.toFixed(2);
+            document.getElementById('timelineTrack').setAttribute('aria-valuemax', maxFrames);
         });
 
         document.getElementById('recordRangeSlider').addEventListener('input', (e) => {
@@ -1174,6 +1291,7 @@
             const percent = (currentFrame / maxFrames) * 100;
             document.getElementById('timelineProgress').style.width = percent + '%';
             document.getElementById('currentFrameLabel').textContent = currentFrame;
+            document.getElementById('timelineTrack').setAttribute('aria-valuenow', currentFrame);
         }
 
         function firstFrame() {
@@ -1196,9 +1314,22 @@
             updateTimeline();
         }
 
-        // ============ INITIALIZATION ============
-        loadSettings();
-        updateConnectionStatus(false);
+        // ============ INICIALIZACIÓN ============
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            updateConnectionStatus(false);
+        });
+
+        // Keyboard navigation para la timeline
+        document.getElementById('timelineTrack').addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevFrame();
+                e.preventDefault();
+            } else if (e.key === 'ArrowRight') {
+                nextFrame();
+                e.preventDefault();
+            }
+        });
     </script>
 </body>
 </html>
