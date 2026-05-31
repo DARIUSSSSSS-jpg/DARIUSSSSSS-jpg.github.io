@@ -1,18 +1,37 @@
 """
-BLENDER CAMERA CONTROLLER v3.1 - Professional Edition
+Motion Control Suite - Blender Addon v3.2
+Professional Camera Motion Capture System for Blender
+
 Controla la cámara 3D en Blender en tiempo real desde el móvil
 Soporta: Rotación + Acelerómetro + Duración dinámica de frames + Motion Capture Pro
 
-INSTALACIÓN:
-1. Blender > Scripting > New
-2. Copiar este código
-3. Alt + P para ejecutar
+INFORMACIÓN DEL ADDON:
+- Categoría: Animación
+- Ubicación: Propiedades de Escena > Motion Control
+- Versión: 3.2
+- Blender: 3.0+
 
-REQUISITOS:
-- Blender 3.0+
-- Python 3.9+
-- Red local (Wi-Fi) con acceso a puerto 5005
+INSTALACIÓN:
+1. Copiar este archivo a: Blender/X.X/scripts/addons/
+2. Blender > Edit > Preferences > Add-ons
+3. Buscar "Motion Control"
+4. Activar addon
+5. Panel aparecerá en Scene Properties bajo "Animación"
 """
+
+bl_info = {
+    "name": "Motion Control Suite",
+    "author": "DARIUSSSSSS-jpg with Copilot AI",
+    "version": (3, 2, 0),
+    "blender": (3, 0, 0),
+    "location": "Scene Properties > Motion Control",
+    "description": "Professional Camera Motion Capture System - Control your Blender camera in real-time from mobile device sensors",
+    "warning": "",
+    "doc_url": "https://github.com/DARIUSSSSSS-jpg/DARIUSSSSSS-jpg.github.io",
+    "tracker_url": "https://github.com/DARIUSSSSSS-jpg/DARIUSSSSSS-jpg.github.io/issues",
+    "support": "COMMUNITY",
+    "category": "Animation",
+}
 
 import bpy
 import json
@@ -31,6 +50,45 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 logger = logging.getLogger(__name__)
+
+
+class MotionControlProperties(bpy.types.PropertyGroup):
+    """Propiedades del addon Motion Control."""
+    
+    rotation_smoothing: bpy.props.FloatProperty(
+        name="Rotation Smoothing",
+        description="Suavizado de rotación (0-1, mayor = más suave)",
+        default=0.7,
+        min=0.0,
+        max=1.0,
+        step=0.1
+    )
+    
+    position_smoothing: bpy.props.FloatProperty(
+        name="Position Smoothing",
+        description="Suavizado de posición (0-1, mayor = más suave)",
+        default=0.8,
+        min=0.0,
+        max=1.0,
+        step=0.1
+    )
+    
+    position_scale: bpy.props.FloatProperty(
+        name="Position Scale",
+        description="Escala de movimiento desde acelerómetro",
+        default=0.1,
+        min=0.01,
+        max=1.0,
+        step=0.01
+    )
+    
+    server_port: bpy.props.IntProperty(
+        name="Server Port",
+        description="Puerto UDP para servidor Motion Control",
+        default=5005,
+        min=1024,
+        max=65535
+    )
 
 
 class ProfessionalCameraController:
@@ -269,7 +327,7 @@ class ProfessionalCameraController:
         self.is_running = True
         
         logger.info("=" * 70)
-        logger.info("PROFESSIONAL CAMERA CONTROLLER v3.1")
+        logger.info("PROFESSIONAL CAMERA CONTROLLER v3.2 - ADDON")
         logger.info("=" * 70)
         logger.info(f"🎬 Escuchando en {self.host}:{self.port}")
         logger.info(f"📱 Conecta tu móvil a: http://[TU_IP]:{self.port}")
@@ -326,11 +384,20 @@ class ProfessionalCameraController:
 controller = None
 
 
-def start_controller():
+def start_controller(scene=None):
     """Inicia instancia global del controlador."""
     global controller
     if controller is None:
         controller = ProfessionalCameraController()
+    
+    # Aplicar propiedades de la escena
+    if scene and hasattr(scene, 'motion_control_props'):
+        props = scene.motion_control_props
+        controller.rotation_smoothing = props.rotation_smoothing
+        controller.position_smoothing = props.position_smoothing
+        controller.position_scale = props.position_scale
+        controller.port = props.server_port
+    
     controller.start()
 
 
@@ -343,27 +410,33 @@ def stop_controller():
 
 # ============ PANEL UI ============
 
-class CAMERA_CONTROLLER_PT_Panel(bpy.types.Panel):
+class MOTION_CONTROL_PT_Panel(bpy.types.Panel):
     """Panel de control en propiedades de escena."""
-    bl_label = "Motion Control"
-    bl_idname = "CAMERA_CONTROLLER_PT_panel"
+    bl_label = "Motion Control Suite"
+    bl_idname = "SCENE_PT_motion_control"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
     
     def draw(self, context):
         layout = self.layout
+        scene = context.scene
+        props = scene.motion_control_props
         
-        layout.label(text="🎥 Camera Motion Control", icon='CAMERA_DATA')
+        # ============ HEADER ============
+        row = layout.row()
+        row.label(text="🎥 Motion Control Suite v3.2", icon='CAMERA_DATA')
+        
         layout.separator()
         
         if controller and controller.is_running:
             # ============ STATUS ACTIVE ============
-            row = layout.row()
+            row = layout.row(align=True)
             row.label(text="Estado:", icon='INFO')
             row.label(text="✓ ACTIVO", icon='PLAY')
             
-            layout.operator("wm.stop_camera_controller", 
+            layout.operator("wm.stop_motion_controller", 
                           text="⏹ Detener Controlador", icon='CANCEL')
             layout.separator()
             
@@ -380,50 +453,63 @@ class CAMERA_CONTROLLER_PT_Panel(bpy.types.Panel):
             
             layout.separator()
             
-            # ============ CONFIGURATION ============
-            box = layout.box()
-            box.label(text="⚙ Configuración", icon='PREFERENCES')
-            
-            row = box.row()
-            row.label(text="Suavizado Rotación:")
-            row.prop(context.scene, "camera_controller_rotation_smoothing", 
-                    text="", slider=True)
-            if context.scene.camera_controller_rotation_smoothing != controller.rotation_smoothing:
-                controller.rotation_smoothing = context.scene.camera_controller_rotation_smoothing
-            
-            row = box.row()
-            row.label(text="Suavizado Posición:")
-            row.prop(context.scene, "camera_controller_position_smoothing", 
-                    text="", slider=True)
-            if context.scene.camera_controller_position_smoothing != controller.position_smoothing:
-                controller.position_smoothing = context.scene.camera_controller_position_smoothing
-                
         else:
             # ============ STATUS INACTIVE ============
-            row = layout.row()
+            row = layout.row(align=True)
             row.label(text="Estado:", icon='INFO')
             row.label(text="✗ INACTIVO", icon='PAUSE')
             
-            layout.operator("wm.start_camera_controller", 
+            layout.operator("wm.start_motion_controller", 
                           text="▶ Iniciar Controlador", icon='PLAY')
+            layout.separator()
+        
+        # ============ CONFIGURATION ============
+        box = layout.box()
+        box.label(text="⚙ Configuración", icon='PREFERENCES')
+        
+        row = box.row()
+        row.label(text="Suavizado Rotación:")
+        row.prop(props, "rotation_smoothing", text="", slider=True)
+        
+        row = box.row()
+        row.label(text="Suavizado Posición:")
+        row.prop(props, "position_smoothing", text="", slider=True)
+        
+        row = box.row()
+        row.label(text="Escala Posición:")
+        row.prop(props, "position_scale", text="", slider=True)
+        
+        row = box.row()
+        row.label(text="Puerto UDP:")
+        row.prop(props, "server_port", text="")
+        
+        layout.separator()
+        
+        # ============ INFO BOX ============
+        info_box = layout.box()
+        info_box.label(text="ℹ Información", icon='INFO')
+        info_col = info_box.column(align=True)
+        info_col.label(text="Abre tu navegador en:", icon='URL')
+        info_col.label(text="http://[TU_IP_PC]/motion-control.html")
+        info_col.label(text="Puerto: " + str(props.server_port))
 
 
-class WM_OT_StartCameraController(bpy.types.Operator):
+class WM_OT_StartMotionController(bpy.types.Operator):
     """Operador para iniciar controlador."""
-    bl_idname = "wm.start_camera_controller"
-    bl_label = "Start Camera Controller"
-    bl_description = "Inicia el controlador de cámara Motion Capture"
+    bl_idname = "wm.start_motion_controller"
+    bl_label = "Start Motion Controller"
+    bl_description = "Inicia el controlador de cámara Motion Control Suite"
     
     def execute(self, context):
-        start_controller()
+        start_controller(context.scene)
         return {'FINISHED'}
 
 
-class WM_OT_StopCameraController(bpy.types.Operator):
+class WM_OT_StopMotionController(bpy.types.Operator):
     """Operador para detener controlador."""
-    bl_idname = "wm.stop_camera_controller"
-    bl_label = "Stop Camera Controller"
-    bl_description = "Detiene el controlador de cámara Motion Capture"
+    bl_idname = "wm.stop_motion_controller"
+    bl_label = "Stop Motion Controller"
+    bl_description = "Detiene el controlador de cámara Motion Control Suite"
     
     def execute(self, context):
         stop_controller()
@@ -435,30 +521,19 @@ class WM_OT_StopCameraController(bpy.types.Operator):
 def register():
     """Registra clases y propiedades."""
     try:
-        bpy.utils.register_class(CAMERA_CONTROLLER_PT_Panel)
-        bpy.utils.register_class(WM_OT_StartCameraController)
-        bpy.utils.register_class(WM_OT_StopCameraController)
+        bpy.utils.register_class(MotionControlProperties)
+        bpy.utils.register_class(MOTION_CONTROL_PT_Panel)
+        bpy.utils.register_class(WM_OT_StartMotionController)
+        bpy.utils.register_class(WM_OT_StopMotionController)
         
-        # Propiedades de escena
-        bpy.types.Scene.camera_controller_rotation_smoothing = bpy.props.FloatProperty(
-            name="Rotation Smoothing",
-            description="Suavizado de rotación (0-1, mayor = más suave)",
-            default=0.7,
-            min=0.0,
-            max=1.0,
-            step=0.1
+        # Asignar propiedades a Scene
+        bpy.types.Scene.motion_control_props = bpy.props.PointerProperty(
+            type=MotionControlProperties,
+            name="Motion Control Properties"
         )
         
-        bpy.types.Scene.camera_controller_position_smoothing = bpy.props.FloatProperty(
-            name="Position Smoothing",
-            description="Suavizado de posición (0-1, mayor = más suave)",
-            default=0.8,
-            min=0.0,
-            max=1.0,
-            step=0.1
-        )
-        
-        logger.info("✓ Motion Control Addon registrado correctamente")
+        logger.info("✓ Motion Control Suite Addon registrado correctamente")
+        logger.info(f"✓ Ubicación: Scene Properties > Motion Control Suite")
         
     except Exception as e:
         logger.error(f"✗ Error durante registro: {e}")
@@ -469,21 +544,16 @@ def unregister():
     try:
         stop_controller()
         
-        bpy.utils.unregister_class(CAMERA_CONTROLLER_PT_Panel)
-        bpy.utils.unregister_class(WM_OT_StartCameraController)
-        bpy.utils.unregister_class(WM_OT_StopCameraController)
+        bpy.utils.unregister_class(MOTION_CONTROL_PT_Panel)
+        bpy.utils.unregister_class(WM_OT_StartMotionController)
+        bpy.utils.unregister_class(WM_OT_StopMotionController)
+        bpy.utils.unregister_class(MotionControlProperties)
         
         # Remover propiedades
-        props_to_remove = [
-            "camera_controller_rotation_smoothing",
-            "camera_controller_position_smoothing"
-        ]
+        if hasattr(bpy.types.Scene, 'motion_control_props'):
+            del bpy.types.Scene.motion_control_props
         
-        for prop in props_to_remove:
-            if hasattr(bpy.types.Scene, prop):
-                del getattr(bpy.types.Scene, prop)
-        
-        logger.info("✓ Motion Control Addon desregistrado correctamente")
+        logger.info("✓ Motion Control Suite Addon desregistrado correctamente")
         
     except Exception as e:
         logger.error(f"✗ Error durante desregistro: {e}")
@@ -491,5 +561,3 @@ def unregister():
 
 if __name__ == "__main__":
     register()
-    start_controller()
-    logger.info("🚀 Blender Camera Controller iniciado")
